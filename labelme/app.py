@@ -1018,6 +1018,8 @@ class MainWindow(QtWidgets.QMainWindow):
         label = str(item.text())
         if label != shape.label:
             shape.label = str(item.text())
+            shape.line_color = self.canvas.labelToColor.get(shape.label, QtGui.QColor(0, 0, 0, 255))
+            shape.fill_color = self.canvas.labelToColor.get(shape.label, QtGui.QColor(0, 0, 0, 255))
             self.setDirty()
         else:  # User probably changed item visibility
             self.canvas.setShapeVisible(shape, item.checkState() == Qt.Checked)

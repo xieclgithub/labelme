@@ -123,6 +123,8 @@ def _main():
         else:
             args.labels = [l for l in args.labels.split(',') if l]
 
+    args.labels = ['free_space', 'park_free', 'park_occupy', 'lever', 'corner', 'bucket', 'lock', 'unlock']
+
     config_from_args = args.__dict__
     config_from_args.pop('version')
     reset_config = config_from_args.pop('reset_config')

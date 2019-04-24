@@ -71,6 +71,16 @@ class Canvas(QtWidgets.QWidget):
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
+        self.labelToColor = {
+            'free_space': QtGui.QColor(0, 128, 128, 128),
+            'park_free': QtGui.QColor(255, 0, 0, 128),
+            'park_occupy': QtGui.QColor(255, 0, 255, 128),
+            'lever': QtGui.QColor(0, 0, 255, 128),
+            'corner': QtGui.QColor(0, 255, 0, 128),
+            'bucket': QtGui.QColor(0, 255, 255, 128),
+            'lock': QtGui.QColor(255, 255, 0, 128),
+            'unlock': QtGui.QColor(128, 0, 0, 128),
+        }
 
     def fillDrawing(self):
         return self._fill_drawing
@@ -646,6 +656,8 @@ class Canvas(QtWidgets.QWidget):
     def setLastLabel(self, text):
         assert text
         self.shapes[-1].label = text
+        self.shapes[-1].fill_color = self.labelToColor.get(text, QtGui.QColor(0, 0, 0, 255))
+        self.shapes[-1].line_color = self.labelToColor.get(text, QtGui.QColor(0, 0, 0, 255))
         self.shapesBackups.pop()
         self.storeShapes()
         return self.shapes[-1]
