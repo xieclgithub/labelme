@@ -317,6 +317,10 @@ class MainWindow(QtWidgets.QMainWindow):
                           None, 'edit', 'Add point to the nearest edge',
                           enabled=False)
 
+        deletePoint = action('Delete Point', self.canvas.deletePointInShape,
+                             None, 'edit', 'Delete point out of shape',
+                             enabled=False)
+
         undo = action('Undo', self.undoShapeEdit, shortcuts['undo'], 'undo',
                       'Undo last add and edit of shape', enabled=False)
 
@@ -415,6 +419,7 @@ class MainWindow(QtWidgets.QMainWindow):
             delete=delete, edit=edit, copy=copy,
             undoLastPoint=undoLastPoint, undo=undo,
             addPoint=addPoint,
+            deletePoint=deletePoint,
             createMode=createMode, editMode=editMode,
             createRectangleMode=createRectangleMode,
             createCircleMode=createCircleMode,
@@ -447,6 +452,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 undo,
                 undoLastPoint,
                 addPoint,
+                deletePoint,
             ),
             onLoadActive=(
                 close,
@@ -462,6 +468,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         self.canvas.edgeSelected.connect(self.actions.addPoint.setEnabled)
+        self.canvas.pointSelected.connect(self.actions.deletePoint.setEnabled)
 
         self.menus = utils.struct(
             file=self.menu('&File'),
@@ -740,6 +747,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def toggleAddPointEnabled(self, enabled):
         self.actions.addPoint.setEnabled(enabled)
+
+    def toggleDeletePointEnabled(self, enabled):
+        self.actions.deletePoint.setEnabled(enabled)
 
     def toggleDrawingSensitive(self, drawing=True):
         """Toggle drawing sensitive.
