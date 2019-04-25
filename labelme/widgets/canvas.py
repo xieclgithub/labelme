@@ -21,6 +21,7 @@ CURSOR_GRAB = QtCore.Qt.OpenHandCursor
 class Canvas(QtWidgets.QWidget):
 
     zoomRequest = QtCore.Signal(int, QtCore.QPoint)
+    zoomMove = QtCore.Signal(QtCore.QPoint)
     scrollRequest = QtCore.Signal(int, int)
     newShape = QtCore.Signal()
     selectionChanged = QtCore.Signal(bool)
@@ -82,6 +83,7 @@ class Canvas(QtWidgets.QWidget):
             'lock': QtGui.QColor(255, 255, 0, 128),
             'unlock': QtGui.QColor(128, 0, 0, 128),
         }
+        self.isZoomMove = False
 
     def fillDrawing(self):
         return self._fill_drawing
@@ -234,6 +236,10 @@ class Canvas(QtWidgets.QWidget):
                 self.movingShape = True
             return
 
+        if self.isZoomMove:
+            move_shift = self.prevMovePoint - self.prevPoint
+            self.prevPoint = self.prevMovePoint
+            self.zoomMove.emit(move_shift)
         # Just hovering over the canvas, 2 posibilities:
         # - Highlight shapes
         # - Highlight vertex
@@ -348,6 +354,9 @@ class Canvas(QtWidgets.QWidget):
             self.selectShapePoint(pos)
             self.prevPoint = pos
             self.repaint()
+        elif ev.button() == QtCore.Qt.MiddleButton:
+            self.isZoomMove = True
+            self.prevPoint = pos
 
     def mouseReleaseEvent(self, ev):
         if ev.button() == QtCore.Qt.RightButton:
@@ -360,6 +369,8 @@ class Canvas(QtWidgets.QWidget):
                 self.repaint()
         elif ev.button() == QtCore.Qt.LeftButton and self.selectedShape:
             self.overrideCursor(CURSOR_GRAB)
+        elif ev.button() == QtCore.Qt.MiddleButton:
+            self.isZoomMove = False
         if self.movingShape:
             self.storeShapes()
             self.shapeMoved.emit()
@@ -639,11 +650,11 @@ class Canvas(QtWidgets.QWidget):
             if QtCore.Qt.ControlModifier == int(mods):
                 # with Ctrl/Command key
                 # zoom
-                self.zoomRequest.emit(delta.y(), ev.pos())
-            else:
-                # scroll
                 self.scrollRequest.emit(delta.x(), QtCore.Qt.Horizontal)
                 self.scrollRequest.emit(delta.y(), QtCore.Qt.Vertical)
+            else:
+                # scroll
+                self.zoomRequest.emit(delta.y(), ev.pos())
         else:
             if ev.orientation() == QtCore.Qt.Vertical:
                 mods = ev.modifiers()

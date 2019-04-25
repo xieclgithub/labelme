@@ -143,6 +143,7 @@ class MainWindow(QtWidgets.QMainWindow):
             epsilon=self._config['epsilon'],
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
+        self.canvas.zoomMove.connect(self.zoomMove)
 
         scrollArea = QtWidgets.QScrollArea()
         scrollArea.setWidget(self.canvas)
@@ -1023,6 +1024,28 @@ class MainWindow(QtWidgets.QMainWindow):
             shape = self.labelList.get_shape_from_item(item)
             self.canvas.selectShape(shape)
 
+            # self.setFitWidth()
+            # canvas_width_old = self.canvas.width()
+            # w1 = self.centralWidget().width()
+            # h1 = self.centralWidget().height()
+            # a1 = w1 / h1
+            #
+            # w2 = shape.boundingRect().width() - 0.0
+            # h2 = shape.boundingRect().height() - 0.0
+            # a2 = w2 / h2
+            # value = w1 / w2 if a2 >= a1 else h1 / h2
+            # self.adjustPartScale(value - 0.1)
+            # canvas_width_new = self.canvas.width()
+            # canvas_scale_factor = canvas_width_new / canvas_width_old
+            # print(canvas_scale_factor)
+            # x_shift = round(shape.boundingRect().center().x() * canvas_scale_factor) - shape.boundingRect().center().x()
+            # y_shift = round(shape.boundingRect().center().y() * canvas_scale_factor) - shape.boundingRect().center().y()
+            #
+            # self.scrollBars[Qt.Horizontal].setValue(
+            #     self.scrollBars[Qt.Horizontal].value() + x_shift)
+            # self.scrollBars[Qt.Vertical].setValue(
+            #     self.scrollBars[Qt.Vertical].value() + y_shift)
+
     def labelItemChanged(self, item):
         shape = self.labelList.get_shape_from_item(item)
         label = str(item.text())
@@ -1083,6 +1106,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def addZoom(self, increment=1.1):
         self.setZoom(self.zoomWidget.value() * increment)
+
+    def zoomMove(self, pos_shilt):
+        self.scrollBars[Qt.Horizontal].setValue(
+            self.scrollBars[Qt.Horizontal].value() + pos_shilt.x())
+        self.scrollBars[Qt.Vertical].setValue(
+            self.scrollBars[Qt.Vertical].value() + pos_shilt.y())
 
     def zoomRequest(self, delta, pos):
         canvas_width_old = self.canvas.width()
