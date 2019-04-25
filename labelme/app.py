@@ -203,6 +203,22 @@ class MainWindow(QtWidgets.QMainWindow):
             u'Open prev (hold Ctl+Shift to copy labels)',
             enabled=False,
         )
+        openNextLabel = action(
+            '&Next Label',
+            self.openNextImg,
+            shortcuts['label_next'],
+            'label_next',
+            u'Open next label (hold Ctl+Shift to copy labels)',
+            enabled=False,
+        )
+        openPrevLabel = action(
+            '&Prev Label',
+            self.openPrevImg,
+            shortcuts['label_prev'],
+            'label_prev',
+            u'Open prev label (hold Ctl+Shift to copy labels)',
+            enabled=False,
+        )
         save = action('&Save', self.saveFile, shortcuts['save'], 'save',
                       'Save labels to file', enabled=False)
         saveAs = action('&Save As', self.saveFileAs, shortcuts['save_as'],
@@ -432,6 +448,7 @@ class MainWindow(QtWidgets.QMainWindow):
             fitWindow=fitWindow, fitWidth=fitWidth,
             zoomActions=zoomActions,
             openNextImg=openNextImg, openPrevImg=openPrevImg,
+            openNextLabel=openNextLabel, openPrevLabel=openPrevLabel,
             fileMenuActions=(open_, opendir, save, saveAs, close, quit),
             tool=(),
             editMenu=(edit, copy, delete, None, undo, undoLastPoint,
@@ -486,6 +503,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 open_,
                 openNextImg,
                 openPrevImg,
+                openNextLabel,
+                openPrevLabel,
                 opendir,
                 self.menus.recentFiles,
                 save,
@@ -541,6 +560,8 @@ class MainWindow(QtWidgets.QMainWindow):
             opendir,
             openNextImg,
             openPrevImg,
+            openNextLabel,
+            openPrevLabel,
             save,
             deleteFile,
             None,
@@ -920,6 +941,7 @@ class MainWindow(QtWidgets.QMainWindow):
         item.setCheckState(Qt.Checked)
         self.labelList.itemsToShapes.append((item, shape))
         self.labelList.addItem(item)
+        self.labelList.sortItems()
         if not self.uniqLabelList.findItems(shape.label, Qt.MatchExactly):
             self.uniqLabelList.addItem(shape.label)
             self.uniqLabelList.sortItems()
@@ -1337,6 +1359,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.loadFile(self.filename)
 
         self._config['keep_prev'] = keep_prev
+
+    def openPrevLabel(self, _value=False):
+        print("openPrevLabel")
+
+    def openNextLabel(self, _value=False):
+        print("openNextLabel")
 
     def openFile(self, _value=False):
         if not self.mayContinue():
